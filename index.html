@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Mr. Rich's Vocabulary</title>
+<style>
+:root{--teal:#0F5C5C;--teal-d:#0a4444;--coral:#C2542D;--coral-d:#9e4223;--gold:#FFC845;--ink:#061212}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:Arial,Helvetica,sans-serif;background:var(--ink);color:#fff;min-height:100vh}
+header{background:linear-gradient(135deg,var(--teal) 0%,var(--teal-d) 60%,#082f2f 100%);padding:46px 24px 40px;text-align:center;position:relative;overflow:hidden}
+header::before{content:"";position:absolute;right:-90px;top:-110px;width:320px;height:320px;border-radius:50%;background:rgba(194,84,45,.45)}
+header::after{content:"";position:absolute;left:-70px;bottom:-130px;width:280px;height:280px;border-radius:50%;background:rgba(255,200,69,.14)}
+h1{position:relative;z-index:1;font-size:clamp(32px,6vw,58px);color:var(--gold);text-shadow:0 3px 0 #6b3a10,0 6px 18px rgba(0,0,0,.5);letter-spacing:1px}
+.sub{position:relative;z-index:1;font-size:clamp(16px,2.4vw,20px);color:#d9f2ef;margin-top:10px}
+.filters{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;padding:26px 16px 6px}
+.filters button{font:bold 16px Arial;color:#e8f4f3;background:#183535;border:2px solid #2a5252;border-radius:30px;padding:9px 20px;cursor:pointer}
+.filters button.on{background:var(--gold);color:#0b2a2a;border-color:var(--gold)}
+main{max-width:1180px;margin:0 auto;padding:22px 16px 60px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:26px}
+.card{display:flex;flex-direction:column;background:#fff;color:#0b2a2a;border-radius:20px;overflow:hidden;text-decoration:none;box-shadow:0 10px 30px rgba(0,0,0,.4);transition:transform .15s,box-shadow .15s}
+.card:hover{transform:translateY(-4px);box-shadow:0 16px 40px rgba(0,0,0,.5)}
+.thumb{position:relative;aspect-ratio:16/9;background:var(--teal) center/cover no-repeat}
+.badge{position:absolute;left:14px;top:14px;background:var(--coral);color:#fff;font-weight:bold;font-size:14px;padding:6px 12px;border-radius:20px;box-shadow:0 3px 8px rgba(0,0,0,.3)}
+.info{padding:18px 20px 20px;display:flex;flex-direction:column;gap:8px;flex:1;border-top:6px solid var(--gold)}
+.info h2{font-size:24px;color:var(--teal)}
+.info p{font-size:16px;color:#4b6463;line-height:1.4}
+.tags{display:flex;flex-wrap:wrap;gap:6px;margin-top:4px}
+.tags span{font-size:13px;font-weight:bold;background:#eef5f4;color:var(--teal);border-radius:14px;padding:4px 10px}
+.go{margin-top:auto;padding-top:10px;font-weight:bold;color:var(--coral);font-size:17px}
+.empty{text-align:center;color:#9fbab8;font-size:18px;padding:40px}
+footer{text-align:center;color:#6f8f8d;font-size:14px;padding:0 16px 30px}
+</style>
+</head>
+<body>
+<header>
+  <h1>Mr. Rich's Vocabulary</h1>
+  <div class="sub">Choose a vocabulary deck to study, practise and play</div>
+</header>
+<div class="filters" id="filters"></div>
+<main><div class="grid" id="grid"></div></main>
+<footer>Save your work inside each deck with <b>Save my deck</b>.</footer>
+
+<script>
+/* ===== Add new builds here (newest first). folder = the build's folder in this repo. ===== */
+const BUILDS = [
+  {
+    folder: 'unit-3',
+    title: 'Unit 3 Vocabulary',
+    group: 'Unit 3',
+    desc: 'Shopping, food and places: 27 terms with pictures, definitions, example sentences and Vietnamese.',
+    tags: ['27 terms', '6 card modes', '6 games']
+  }
+];
+
+const groups = [...new Set(BUILDS.map(b => b.group).filter(Boolean))];
+const fEl = document.getElementById('filters'), gEl = document.getElementById('grid');
+let current = 'All';
+function esc(s){ return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+function render(){
+  if (groups.length > 1) {
+    fEl.innerHTML = ['All', ...groups].map(g => `<button class="${g === current ? 'on' : ''}" data-g="${esc(g)}">${esc(g)}</button>`).join('');
+    fEl.querySelectorAll('button').forEach(b => b.onclick = () => { current = b.dataset.g; render(); });
+  } else fEl.style.display = 'none';
+  const list = BUILDS.filter(b => current === 'All' || b.group === current);
+  gEl.innerHTML = list.length ? list.map(b => `
+    <a class="card" href="${esc(b.folder)}/">
+      <div class="thumb" style="background-image:url('${esc(b.folder)}/thumb.jpg')">${b.group ? `<span class="badge">${esc(b.group)}</span>` : ''}</div>
+      <div class="info"><h2>${esc(b.title)}</h2><p>${esc(b.desc || '')}</p>
+        <div class="tags">${(b.tags || []).map(t => `<span>${esc(t)}</span>`).join('')}</div>
+        <div class="go">Open deck ›</div></div>
+    </a>`).join('') : '<div class="empty">No decks yet.</div>';
+}
+render();
+</script>
+</body>
+</html>
