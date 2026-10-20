@@ -233,7 +233,7 @@ select.ed option{color:#000;background:#fff}
 .mbtn{min-height:58px;padding:6px 18px;margin-bottom:9px}
 .mbtn .t1{font-size:23px}
 .mbtn .t2{font-size:16px}
-.mbtn.flash{background:#14706f;box-shadow:0 5px 0 var(--teal-d);border:2px solid var(--gold)}
+.mbtn.flash{background:var(--teal);filter:brightness(1.22);box-shadow:0 5px 0 var(--teal-d);border:2px solid var(--gold)}
 .ask-n{font-size:19px;color:#4b6463;margin-top:20px;line-height:1.35}
 
 /* ---------- word family ---------- */
@@ -362,7 +362,7 @@ const S = saved && saved.v === 1 ? saved : {v:1, name:'', cls:'', m:{addTerm:{},
 ['addTerm','addDef','addAll','blank'].forEach(k => { if (!S.m[k]) S.m[k] = {}; });
 if (!Array.isArray(S.m.own) || !S.m.own.length) S.m.own = [{}];
 if (!S.g) S.g = {};
-const LANG = qzh || S.lang === 'zh' ? 'zh' : 'vi';   // set only by the ?zh link; saved copies remember it
+const LANG = (qzh || S.lang === 'zh') && C[0].zw ? 'zh' : 'vi';   // set only by the ?zh link; saved copies remember it
 S.lang = LANG;
 const LNAME = LANG === 'zh' ? 'Chinese' : 'Vietnamese';
 const TR = c => LANG === 'zh' ? {w:c.zw, m:c.zm} : {w:c.vw, m:c.vm};
@@ -381,7 +381,7 @@ const MODES = {
 const GAMES = {
   match:{label:'Picture Match', ic:'🧩', d:'Drag each term onto its picture'},
   gap:  {label:'Gap-Fill Sentences', ic:'🔤', d:'Complete the example sentences'},
-  viet: {label: LNAME + ' → English', ic: LANG === 'zh' ? '🇨🇳' : '🇻🇳', d:'Choose the English term'},
+  viet: {label: LNAME + ' → English', ic:'🌏', d:'Choose the English term'},
   speed:{label:'Speed Review', ic:'⚡', d:'Read the definition, pick the term fast'},
   spell:{label:'Spell It', ic:'🔡', d:'Look at the picture and definition, spell the term'},
   fall: {label:'Falling Words', ic:'🌧️', d:'Type the term before the definition lands'}
@@ -390,7 +390,9 @@ const POS_OPTS = ['Noun','Verb','Adjective','Adverb','Preposition','Conjunction'
 const WF = JSON.parse(document.getElementById('wf-data').textContent);
 const STARBURST = '<span class="burst"><svg viewBox="0 0 100 100"><polygon points="100.0,50.0 88.3,57.6 96.2,69.1 82.4,71.7 85.4,85.4 71.7,82.4 69.1,96.2 57.6,88.3 50.0,100.0 42.4,88.3 30.9,96.2 28.3,82.4 14.6,85.4 17.6,71.7 3.8,69.1 11.7,57.6 0.0,50.0 11.7,42.4 3.8,30.9 17.6,28.3 14.6,14.6 28.3,17.6 30.9,3.8 42.4,11.7 50.0,0.0 57.6,11.7 69.1,3.8 71.7,17.6 85.4,14.6 82.4,28.3 96.2,30.9 88.3,42.4" fill="#FFC845" stroke="#fff" stroke-width="2.5"/></svg><span>START<br>HERE</span></span>';
 const FL = {label:'Flashcard Flip', ic:'🃏', d:'Flip each card, then mark it correct or study again'};
-const POS_COL = {Noun:'#0F5C5C', Verb:'#C2542D', Adjective:'#B8860B', Adverb:'#6B4FA0'};
+const WF_AT = 'left';
+const WFPOS = c => WF_AT === 'left' ? `left:${px(c.b.def[0])};top:690px` : `left:${px(c.b.def[0] + c.b.def[2] - 232)};top:${px(Math.min(704, c.b.viet[1] + c.b.viet[3] + 6))};height:42px;font-size:19px`;
+const POS_COL = {noun:'#0F5C5C', verb:'#C2542D', adjective:'#B8860B', adverb:'#6B4FA0'};
 
 /* ---------- helpers ---------- */
 const esc = s => String(s == null ? '' : s).replace(/[&<>"']/g, ch => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]));
@@ -590,7 +592,7 @@ function renderSlide(){
   } else {
     h += `<img class="abs" src="${IMG[c.pic.img]}" style="${boxCss(c.pic.b)}${c.pic.flip ? 'transform:scaleX(-1);' : ''}" alt="">`;
   }
-  if ((mode === 'cards' && WF[c.term]) || mode === 'own') h += `<button class="wf-btn" id="wfBtn" style="left:${px(c.b.def[0])};top:690px">👪 Word family</button>`;
+  if ((mode === 'cards' && WF[c.term]) || mode === 'own') h += `<button class="wf-btn" id="wfBtn" style="${WFPOS(c)}">👪 Word family</button>`;
   h += `</div>`;
   stage.innerHTML = h;
   if (mode === 'cards') { const wb = stage.querySelector('#wfBtn'); if (wb) wb.onclick = () => showWF(ci); return; }
@@ -677,7 +679,7 @@ const exHL = (text, word) => {
   return i < 0 ? esc(text) : esc(text.slice(0, i)) + '<b>' + esc(text.slice(i, i + word.length)) + '</b>' + esc(text.slice(i + word.length));
 };
 const exMark = t => esc(t).replace(/\[\[(.+?)\]\]/g, '<b>$1</b>');
-const posPill = p => `<span class="wf-pos" style="background:${POS_COL[p] || '#41605e'}">${esc(p)}</span>`;
+const posPill = p => `<span class="wf-pos" style="background:${POS_COL[String(p).toLowerCase()] || '#41605e'}">${esc(p)}</span>`;
 function showWF(ci){
   if (stage.querySelector('.modal-bg')) return;
   const c = C[ci], fam = WF[c.term] || [];
@@ -743,7 +745,7 @@ let F = null;
 function askFlash(){
   const box = document.createElement('div'); box.className = 'modal-bg';
   box.innerHTML = `<div class="ask"><div class="ask-t">${FL.ic} ${FL.label}</div><div class="ask-q" style="font-size:40px">Choose a version</div>
-    <div class="ask-b"><button class="gbtn" data-v="vi">🇬🇧 + ${LANG === 'zh' ? '🇨🇳' : '🇻🇳'} English + ${LNAME}</button><button class="gbtn alt" data-v="en">🇬🇧 English only</button></div>
+    <div class="ask-b"><button class="gbtn" data-v="vi">English + ${LNAME}</button><button class="gbtn alt" data-v="en">English only</button></div>
     <div class="ask-n">The cards are shuffled. You see the definition first; you can switch to the term first on the next screen.</div>
     <button class="ask-x">Cancel</button></div>`;
   stage.appendChild(box);
@@ -761,7 +763,7 @@ function flashFace(i, side, pic){
   const c = C[i], vi = F.ver === 'vi', tap = '<div class="fc-tap">Click to flip ↻</div>';
   const cls = 'fc-txt ' + (side === 'def' ? 'fc-def' : 'fc-term') + (pic ? '' : ' c');
   let inner;
-  if (side === 'def') inner = `<div class="fc-lab">Definition</div><span class="fc-pos">${esc(c.pos)}</span><div class="fc-d">${esc(c.def)}</div>${vi ? `<div class="fc-vi">${esc(TR(c).m)}</div>` : ''}`;
+  if (side === 'def') inner = `<div class="fc-lab">Definition</div><span class="fc-pos">${esc(c.pos)}</span><div class="fc-d" style="${pic ? `font-size:${c.def.length > 95 ? 30 : c.def.length > 65 ? 34 : 40}px` : ''}">${esc(c.def)}</div>${vi ? `<div class="fc-vi" style="${pic && (c.def.length + TR(c).m.length) > 140 ? 'font-size:24px' : ''}">${esc(TR(c).m)}</div>` : ''}`;
   else inner = `<div class="fc-lab">Term</div><div class="fc-w" style="font-size:${pic ? flashSize(c.term) : flashSize(c.term) + 24}px">${esc(c.term)}</div><span class="fc-pos">${esc(c.pos)}</span>${vi ? `<div class="fc-vi"><b>${esc(TR(c).w)}</b></div>` : ''}`;
   return (pic ? `<img class="fc-pic" src="${IMG[c.pic.img]}" alt="">` : '') + `<div class="${cls}">${inner}${tap}</div>`;
 }
