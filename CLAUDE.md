@@ -68,7 +68,7 @@ These rules are kept in sync with the "CONVERT | VOCAB | BASIC HTML Builds" Proj
 - In Picture Match, clicking a picture enlarges it.
 - Games are just practice: no submission.
 - After seeing a new source pptx, suggest a few extra activities.
-- **Unique games:** for every new build, suggest 3 unique games tied to the unit's theme. Their formats must not duplicate the standard games above, Falling Words, or any unit-specific game already in the repo (Verb Patterns, Penalty Shootout, File Manager, Memory Feast, Expedition Crossword, Notice Board Word Search, Odd One Out, Train Coupling).
+- **Unique games:** for every new build, suggest 3 unique games tied to the unit's theme. Their formats must not duplicate the standard games above, Falling Words, or any unit-specific game already in the repo (Verb Patterns, Penalty Shootout, File Manager, Memory Feast, Expedition Crossword, Notice Board Word Search, Odd One Out, Train Coupling, Word Surgery).
 - **Unique-game rollout (approved, not yet built):** Unit 1 Penalty Shootout (shoot left if the term is used correctly, right if misused), Unit 2 File Manager (drag words into part-of-speech folders), Unit 3 Memory Feast (term–picture concentration on plates), Unit 11 Expedition Crossword (map-style, definitions as clues), Unit 12 Notice Board Word Search (definition clues), Unit 13 Odd One Out (all 26 words, with a reason after each pick). The new games work with the `?zh` link in Units 1–3. In the same pass, replace the flag emoji on the Vietnamese → English button in Units 1, 2, 11 and 12.
 
 ## Example sentences
@@ -88,7 +88,7 @@ These rules are kept in sync with the "CONVERT | VOCAB | BASIC HTML Builds" Proj
 
 ## Rollout of newer features
 - Flashcard Flip, Word family and part-of-speech-matched sentences go into new builds first.
-- Done so far: Unit 3 (with its ?zh Chinese version), Unit 4 (with ?zh; unique game: Train Coupling, collocations) and Unit 13 (no ?zh).
+- Done so far: Unit 3 (with its ?zh Chinese version), Unit 4 (with ?zh; unique game: Train Coupling, collocations), Unit 13 (no ?zh) and Unit 14 (no ?zh; unique game: Word Surgery, word forms).
 
 ## Before delivering
 - Check at 1920×1080 (inherited from BASIC): no overflow, each card compared with the source.
