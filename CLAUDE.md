@@ -70,7 +70,7 @@ These rules are kept in sync with the "CONVERT | VOCAB | BASIC HTML Builds" Proj
 - **Falling Words** (also called Word Drop): definitions start falling at 13 px/s (half the original 26), still speeding up a little after each correct answer.
 - After seeing a new source pptx, suggest a few extra activities.
 - **Unique games:** for every new build, suggest 3 unique games tied to the unit's theme. Their formats must not duplicate the standard games above, Falling Words, or any unit-specific game already in the repo (Verb Patterns, Penalty Shootout, File Manager, Memory Feast, Expedition Crossword, Notice Board Word Search, Odd One Out, Train Coupling, Word Surgery).
-- **Unique-game rollout (approved; being built one unit at a time):** Unit 1 Penalty Shootout (shoot left if the term is used correctly, right if misused). Built so far: Unit 13 Odd One Out (all 26 words in 9 sets, with a reason after each pick); Unit 3 Memory Feast (term–picture concentration on covered plates, 6 pairs a round, scored by tries); Unit 2 File Manager (drag words into part-of-speech folders: round 1 the card words, round 2 their word-family forms); Unit 11 Expedition Crossword (three map stages, definitions as clues, on-screen keyboard, Check and Show word); Unit 12 Notice Board Word Search (three cork boards, definitions on sticky notes, tap or drag to find words). The new games work with the `?zh` link in Units 1–3. In the same pass, replace the flag emoji on the Vietnamese → English button in Unit 1 (Units 2, 11 and 12 done).
+- **Unique-game rollout (done):** Unit 1 Penalty Shootout (shoot left if the term is used correctly, right if misused; verb-pattern verbs are misused by breaking the pattern), Unit 2 File Manager (drag words into part-of-speech folders: round 1 the card words, round 2 their word-family forms), Unit 3 Memory Feast (term–picture concentration on covered plates, 6 pairs a round, scored by tries), Unit 4 Train Coupling (collocations), Unit 11 Expedition Crossword (three map stages, definitions as clues, on-screen keyboard, Check and Show word), Unit 12 Notice Board Word Search (three cork boards, definitions on sticky notes, tap or drag to find words), Unit 13 Odd One Out (all 26 words in 9 sets, with a reason after each pick), Unit 14 Word Surgery (word forms). The games in Units 1–4 work with the `?zh` link. The flag emoji is gone from every build.
 
 ## Example sentences
 - New example sentences connect to Vietnamese culture rather than the grammar lessons.
@@ -89,7 +89,7 @@ These rules are kept in sync with the "CONVERT | VOCAB | BASIC HTML Builds" Proj
 
 ## Rollout of newer features
 - Flashcard Flip, Word family and part-of-speech-matched sentences go into new builds first.
-- Done so far: Unit 2 (with ?zh), Unit 3 (with its ?zh Chinese version), Unit 4 (with ?zh; unique game: Train Coupling, collocations), Unit 11 (no ?zh), Unit 12 (no ?zh; no Word family for Audience: no useful form), Unit 13 (no ?zh) and Unit 14 (no ?zh; unique game: Word Surgery, word forms).
+- Done so far (all builds): Units 1, 2, 3 and 4 (with ?zh), Units 11, 12, 13 and 14 (no ?zh). Word family is left out where a word has no useful form (Unit 1: hence, feat, pastime, regardless, monetary; Unit 2: angles; Unit 11: peninsula, hypothermia, capsize, precursor, degree; Unit 12: Throughout, For and against, Outreach, Nurseries, Media, Audience).
 
 ## Before delivering
 - Check at 1920×1080 (inherited from BASIC): no overflow, each card compared with the source.
