@@ -12,6 +12,7 @@ These rules are kept in sync with the "CONVERT | VOCAB | BASIC HTML Builds" Proj
 ## Repo layout
 - One folder per unit: `unit-N/index.html` (one self-contained HTML file) plus `unit-N/thumb.jpg` (landing-page thumbnail, usually from the deck's title slide).
 - The root `index.html` is the landing page. Its `BUILDS` array is edited by hand: add an entry for each new unit with `folder`, `title` ("Unit N Vocabulary"), `group` ("Unit N"), `desc` (topic summary and term count) and `tags` (term count, card modes, games).
+- The landing page sorts itself: two columns, Grade 9 (Units 1–10) on the left and Grade 10 (Units 11–20) on the right, each in reverse unit order (highest first). The shortcut buttons at the top follow the same layout. A new unit's `BUILDS` entry can go anywhere in the array; its `group` number decides its place.
 - Chinese versions live in the same file as the Vietnamese one (see below), so they never get a new folder or a landing-page entry.
 
 ## What a VOCAB build is

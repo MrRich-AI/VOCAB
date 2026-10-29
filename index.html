@@ -13,11 +13,18 @@ header::before{content:"";position:absolute;right:-90px;top:-110px;width:320px;h
 header::after{content:"";position:absolute;left:-70px;bottom:-130px;width:280px;height:280px;border-radius:50%;background:rgba(255,200,69,.14)}
 h1{position:relative;z-index:1;font-size:clamp(32px,6vw,58px);color:var(--gold);text-shadow:0 3px 0 #6b3a10,0 6px 18px rgba(0,0,0,.5);letter-spacing:1px}
 .sub{position:relative;z-index:1;font-size:clamp(16px,2.4vw,20px);color:#d9f2ef;margin-top:10px}
-.filters{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;padding:26px 16px 6px}
+.filters{max-width:1180px;margin:0 auto;padding:26px 16px 6px}
+.fall{display:flex;justify-content:center;margin-bottom:14px}
+.fcols,.cols{display:grid;grid-template-columns:1fr 1fr;gap:26px}
+.fcol{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;align-content:flex-start}
+.fcol h3{flex-basis:100%;text-align:center;font-size:15px;letter-spacing:3px;color:var(--gold);text-transform:uppercase}
 .filters button{font:bold 16px Arial;color:#e8f4f3;background:#183535;border:2px solid #2a5252;border-radius:30px;padding:9px 20px;cursor:pointer}
 .filters button.on{background:var(--gold);color:#0b2a2a;border-color:var(--gold)}
 main{max-width:1180px;margin:0 auto;padding:22px 16px 60px}
-.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:26px}
+.col{display:flex;flex-direction:column;gap:26px;min-width:0}
+.col h3{text-align:center;font-size:20px;letter-spacing:3px;color:var(--gold);text-transform:uppercase;border-bottom:3px solid var(--gold);padding-bottom:8px}
+.col .card{flex-shrink:0}
+@media (max-width:760px){.fcols,.cols{grid-template-columns:1fr}}
 .card{display:flex;flex-direction:column;background:#fff;color:#0b2a2a;border-radius:20px;overflow:hidden;text-decoration:none;box-shadow:0 10px 30px rgba(0,0,0,.4);transition:transform .15s,box-shadow .15s}
 .card:hover{transform:translateY(-4px);box-shadow:0 16px 40px rgba(0,0,0,.5)}
 .thumb{position:relative;aspect-ratio:16/9;background:var(--teal) center/cover no-repeat}
@@ -38,11 +45,12 @@ footer{text-align:center;color:#6f8f8d;font-size:14px;padding:0 16px 30px}
   <div class="sub">Choose a vocabulary deck to study, practise and play</div>
 </header>
 <div class="filters" id="filters"></div>
-<main><div class="grid" id="grid"></div></main>
+<main><div class="cols" id="grid"></div></main>
 <footer>Save your work inside each deck with <b>Save my deck</b>.</footer>
 
 <script>
-/* ===== Add new builds here (newest first). folder = the build's folder in this repo. ===== */
+/* ===== Add new builds here, in any order: the page sorts them by unit number (highest first) and puts
+   Grade 9 (Units 1-10) on the left and Grade 10 (Units 11-20) on the right. folder = the build's folder in this repo. ===== */
 const BUILDS = [
   {
     folder: 'unit-1',
@@ -102,23 +110,29 @@ const BUILDS = [
   }
 ];
 
-const groups = [...new Set(BUILDS.map(b => b.group).filter(Boolean))];
+const unitNo = b => +((b.group || b.folder).match(/\d+/) || [0])[0];
+const GRADES = [{name:'Grade 9', label:'G9 · Units 1–10', has:n => n >= 1 && n <= 10}, {name:'Grade 10', label:'G10 · Units 11–20', has:n => n >= 11 && n <= 20}];
+const sorted = BUILDS.slice().sort((a, b) => unitNo(b) - unitNo(a));
+const byGrade = GRADES.map(g => sorted.filter(b => g.has(unitNo(b))));
 const fEl = document.getElementById('filters'), gEl = document.getElementById('grid');
 let current = 'All';
 function esc(s){ return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
-function render(){
-  if (groups.length > 1) {
-    fEl.innerHTML = ['All', ...groups].map(g => `<button class="${g === current ? 'on' : ''}" data-g="${esc(g)}">${esc(g)}</button>`).join('');
-    fEl.querySelectorAll('button').forEach(b => b.onclick = () => { current = b.dataset.g; render(); });
-  } else fEl.style.display = 'none';
-  const list = BUILDS.filter(b => current === 'All' || b.group === current);
-  gEl.innerHTML = list.length ? list.map(b => `
+const card = b => `
     <a class="card" href="${esc(b.folder)}/">
       <div class="thumb" style="background-image:url('${esc(b.folder)}/thumb.jpg')">${b.group ? `<span class="badge">${esc(b.group)}</span>` : ''}</div>
       <div class="info"><h2>${esc(b.title)}</h2><p>${esc(b.desc || '')}</p>
         <div class="tags">${(b.tags || []).map(t => `<span>${esc(t)}</span>`).join('')}</div>
         <div class="go">Open deck ›</div></div>
-    </a>`).join('') : '<div class="empty">No decks yet.</div>';
+    </a>`;
+function render(){
+  const btn = (g, lab) => `<button class="${g === current ? 'on' : ''}" data-g="${esc(g)}">${esc(lab || g)}</button>`;
+  fEl.innerHTML = `<div class="fall">${btn('All')}</div><div class="fcols">${GRADES.map((g, i) =>
+    `<div class="fcol"><h3>${esc(g.label)}</h3>${byGrade[i].map(b => btn(b.group)).join('')}</div>`).join('')}</div>`;
+  fEl.querySelectorAll('button').forEach(b => b.onclick = () => { current = b.dataset.g; render(); });
+  gEl.innerHTML = GRADES.map((g, i) => {
+    const list = byGrade[i].filter(b => current === 'All' || b.group === current);
+    return `<div class="col"><h3>${esc(g.name)}</h3>${list.length ? list.map(card).join('') : `<div class="empty">${current === 'All' ? 'No decks yet.' : ''}</div>`}</div>`;
+  }).join('');
 }
 render();
 </script>
