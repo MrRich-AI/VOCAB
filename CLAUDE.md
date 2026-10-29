@@ -70,7 +70,7 @@ These rules are kept in sync with the "CONVERT | VOCAB | BASIC HTML Builds" Proj
 - **Falling Words** (also called Word Drop): definitions start falling at 13 px/s (half the original 26), still speeding up a little after each correct answer.
 - After seeing a new source pptx, suggest a few extra activities.
 - **Unique games:** for every new build, suggest 3 unique games tied to the unit's theme. Their formats must not duplicate the standard games above, Falling Words, or any unit-specific game already in the repo (Verb Patterns, Penalty Shootout, File Manager, Memory Feast, Expedition Crossword, Notice Board Word Search, Odd One Out, Train Coupling, Word Surgery).
-- **Unique-game rollout (approved; being built one unit at a time):** Unit 1 Penalty Shootout (shoot left if the term is used correctly, right if misused), Unit 11 Expedition Crossword (map-style, definitions as clues), Unit 12 Notice Board Word Search (definition clues). Built so far: Unit 13 Odd One Out (all 26 words in 9 sets, with a reason after each pick); Unit 3 Memory Feast (term–picture concentration on covered plates, 6 pairs a round, scored by tries); Unit 2 File Manager (drag words into part-of-speech folders: round 1 the card words, round 2 their word-family forms). The new games work with the `?zh` link in Units 1–3. In the same pass, replace the flag emoji on the Vietnamese → English button in Units 1, 11 and 12 (Unit 2 done).
+- **Unique-game rollout (approved; being built one unit at a time):** Unit 1 Penalty Shootout (shoot left if the term is used correctly, right if misused), Unit 12 Notice Board Word Search (definition clues). Built so far: Unit 13 Odd One Out (all 26 words in 9 sets, with a reason after each pick); Unit 3 Memory Feast (term–picture concentration on covered plates, 6 pairs a round, scored by tries); Unit 2 File Manager (drag words into part-of-speech folders: round 1 the card words, round 2 their word-family forms); Unit 11 Expedition Crossword (three map stages, definitions as clues, on-screen keyboard, Check and Show word). The new games work with the `?zh` link in Units 1–3. In the same pass, replace the flag emoji on the Vietnamese → English button in Units 1 and 12 (Units 2 and 11 done).
 
 ## Example sentences
 - New example sentences connect to Vietnamese culture rather than the grammar lessons.
@@ -89,7 +89,7 @@ These rules are kept in sync with the "CONVERT | VOCAB | BASIC HTML Builds" Proj
 
 ## Rollout of newer features
 - Flashcard Flip, Word family and part-of-speech-matched sentences go into new builds first.
-- Done so far: Unit 2 (with ?zh), Unit 3 (with its ?zh Chinese version), Unit 4 (with ?zh; unique game: Train Coupling, collocations), Unit 13 (no ?zh) and Unit 14 (no ?zh; unique game: Word Surgery, word forms).
+- Done so far: Unit 2 (with ?zh), Unit 3 (with its ?zh Chinese version), Unit 4 (with ?zh; unique game: Train Coupling, collocations), Unit 11 (no ?zh), Unit 13 (no ?zh) and Unit 14 (no ?zh; unique game: Word Surgery, word forms).
 
 ## Before delivering
 - Check at 1920×1080 (inherited from BASIC): no overflow, each card compared with the source.
