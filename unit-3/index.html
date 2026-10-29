@@ -335,6 +335,21 @@ select.wfe{flex:0 0 auto;font-size:19px}
 .wf-foot button:disabled{background:#c9d3d2;box-shadow:none;color:#6a7d7c;cursor:not-allowed}
 .wf-foot .n{font-size:18px;color:#4b6463}
 .wf-empty{color:#7a8f8e;font-style:italic}
+
+/* ---------- memory feast ---------- */
+.mf-table{display:grid;grid-template-columns:repeat(6,1fr);gap:30px 18px;justify-items:center;padding:34px 20px;border-radius:26px;
+  background:repeating-conic-gradient(rgba(255,255,255,.07) 0 25%,transparent 0 50%) 0 0/46px 46px,rgba(0,0,0,.18)}
+.mf-plate{position:relative;width:180px;height:180px;border-radius:50%;padding:0;background:radial-gradient(circle,#fff 0 60%,#e3e9ec 61% 66%,#fff 67% 100%);box-shadow:0 9px 20px rgba(0,0,0,.42);transition:transform .12s}
+.mf-plate:hover:not(.open):not(.done){transform:translateY(-3px)}
+.mf-food{position:absolute;inset:24px;border-radius:50%;overflow:hidden;display:flex;align-items:center;justify-content:center;text-align:center;color:#10222e;font-size:21px;line-height:1.1;padding:4px}
+.mf-food img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.mf-lid{position:absolute;inset:4px;border-radius:50%;background:radial-gradient(circle at 34% 28%,#ffffff,#d4dbe0 38%,#8f9aa2 100%);box-shadow:inset 0 -8px 14px rgba(0,0,0,.28),0 4px 8px rgba(0,0,0,.25);transition:transform .35s,opacity .35s}
+.mf-lid::after{content:"";position:absolute;left:50%;top:50%;width:36px;height:36px;margin:-18px;border-radius:50%;background:radial-gradient(circle at 38% 32%,#fff,#8f9aa2);box-shadow:0 3px 5px rgba(0,0,0,.3)}
+.mf-plate.open .mf-lid,.mf-plate.done .mf-lid{transform:translateY(-46px) scale(.88);opacity:0}
+.mf-plate.done{box-shadow:0 0 0 7px #2fa463,0 9px 20px rgba(0,0,0,.42);cursor:default}
+.mf-plate.miss{animation:shake .4s}
+.mf-foot{display:flex;align-items:center;gap:20px;margin-top:22px;min-height:62px}
+.mf-foot .sp{flex:1}
 </style>
 </head>
 <body>
@@ -384,7 +399,8 @@ const GAMES = {
   viet: {label: LNAME + ' → English', ic:'🌏', d:'Choose the English term'},
   speed:{label:'Speed Review', ic:'⚡', d:'Read the definition, pick the term fast'},
   spell:{label:'Spell It', ic:'🔡', d:'Look at the picture and definition, spell the term'},
-  fall: {label:'Falling Words', ic:'🌧️', d:'Type the term before the definition lands'}
+  fall: {label:'Falling Words', ic:'🌧️', d:'Type the term before the definition lands'},
+  feast:{label:'Memory Feast', ic:'🍽️', d:'Lift the covers and match each word to its picture'}
 };
 const POS_OPTS = ['Noun','Verb','Adjective','Adverb','Preposition','Conjunction','Phrase'];
 const WF = JSON.parse(document.getElementById('wf-data').textContent);
@@ -885,7 +901,7 @@ function saveDeck(){
 
 /* ---------- GAMES ---------- */
 function stopTimer(){ if (gTimer) { clearTimeout(gTimer); gTimer = null; } if (G && G.raf) { cancelAnimationFrame(G.raf); G.raf = 0; G.over = true; } }
-function startGame(k){ screen = 'game'; stopTimer(); ({match:startMatch, gap:startGap, spell:startSpell, fall:startFall, viet:() => startMCQ('viet'), speed:() => startMCQ('speed')})[k](); fit(); }
+function startGame(k){ screen = 'game'; stopTimer(); ({match:startMatch, gap:startGap, spell:startSpell, fall:startFall, viet:() => startMCQ('viet'), speed:() => startMCQ('speed'), feast:startFeast})[k](); fit(); }
 function gameShell(key, status, body){
   return `<div class="game"><div class="ghead"><span class="gt">${GAMES[key].ic} ${GAMES[key].label}</span><span class="gs">${status}</span><span class="sp"></span>
     <span class="gs">👤 ${esc(S.name)} · ${esc(S.cls)}</span><button id="gMenu">✕ Menu</button></div><div class="gbody">${body}</div></div>`;
@@ -1205,6 +1221,45 @@ document.addEventListener('keydown', e => {
   else if (e.key === 'Backspace') { e.preventDefault(); fallKey('DEL'); }
   else if (e.key === 'Escape') { G.typed = ''; fallTyped(); }
 });
+
+/* Memory Feast: term-picture concentration, 6 pairs of plates per round */
+function startFeast(){ G = {key:'feast', score:0, total:N, r:0, tries:0}; G.rounds = splitSizes(shuffle(range(N)), sizesFor(N, 6)); feastRound(); }
+function feastStatus(){ return `Round ${G.r + 1} / ${G.rounds.length} · Pairs ${G.score} / ${N} · Tries ${G.tries}`; }
+function feastRound(){
+  const set = G.rounds[G.r]; G.open = []; G.found = 0; G.lock = false;
+  const plates = shuffle(set.flatMap(i => [{i, k:'p'}, {i, k:'t'}]));
+  const body = `<div class="mf-table">${plates.map(p => `<button class="mf-plate" data-i="${p.i}" data-k="${p.k}"><span class="mf-food">${p.k === 'p' ? `<img src="${IMG[C[p.i].pic.img]}" alt="">` : `<b style="font-size:${C[p.i].term.length <= 8 ? 24 : C[p.i].term.length <= 10 ? 20 : 16}px">${esc(C[p.i].term)}</b>`}</span><span class="mf-lid"></span></button>`).join('')}</div>
+    <div class="mf-foot"><span class="hint" id="mfHint">Lift two covers at a time. Find each word and its picture.</span><span class="sp"></span>
+      <button class="gbtn" id="nxt" style="visibility:hidden">${G.r + 1 < G.rounds.length ? 'Next round ›' : 'See results ›'}</button></div>`;
+  stage.innerHTML = gameShell('feast', feastStatus(), body);
+  wireShell();
+  stage.querySelectorAll('.mf-plate').forEach(b => b.onclick = () => feastLift(b));
+  stage.querySelector('#nxt').onclick = () => { G.r++; if (G.r < G.rounds.length) feastRound(); else feastEnd(); };
+}
+function feastLift(b){
+  if (G.lock || b.classList.contains('open') || b.classList.contains('done')) return;
+  b.classList.add('open'); G.open.push(b);
+  if (G.open.length < 2) return;
+  G.tries++;
+  const [a, c] = G.open; G.open = [];
+  if (a.dataset.i === c.dataset.i) {
+    [a, c].forEach(x => { x.classList.remove('open'); x.classList.add('done'); });
+    G.score++; G.found++;
+    if (G.found === G.rounds[G.r].length) { stage.querySelector('#mfHint').innerHTML = '<b style="font-size:24px;color:#fff">🍽️ All plates matched!</b>'; stage.querySelector('#nxt').style.visibility = 'visible'; }
+  } else {
+    G.lock = true;
+    setTimeout(() => { if (G && G.key === 'feast') { [a, c].forEach(x => { x.classList.add('miss'); x.classList.remove('open'); }); setTimeout(() => [a, c].forEach(x => x.classList.remove('miss')), 420); G.lock = false; } }, 1100);
+  }
+  stage.querySelector('.ghead .gs').textContent = feastStatus();
+}
+function feastEnd(){
+  S.g.feast = `${G.tries} tries`;
+  stage.innerHTML = gameShell('feast', 'Finished', `<div class="res"><div class="rt">${GAMES.feast.label}</div><div class="rs">${G.tries}</div>
+    <div class="rw">tries to match all ${N} pairs (fewest possible: ${N})<br>${esc(S.name)} · ${esc(S.cls)}</div><div class="rb"><button class="gbtn" id="again">↻ Play again</button><button class="gbtn alt" id="back">Back to menu</button></div></div>`);
+  wireShell();
+  stage.querySelector('#again').onclick = () => startGame('feast');
+  stage.querySelector('#back').onclick = showMenu;
+}
 
 function results(){
   stopTimer();
