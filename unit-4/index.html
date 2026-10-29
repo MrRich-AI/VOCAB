@@ -1161,7 +1161,7 @@ function kbHTML(){
   return rows.map((r, n) => `<div class="kr">${[...r].map(l => `<button class="key" data-l="${l}">${l}</button>`).join('')}${n === 2 ? '<button class="key wide" data-l="DEL">⌫</button>' : ''}</div>`).join('');
 }
 function startFall(){
-  G = {key:'fall', score:0, total:N, queue:shuffle(range(N)), drops:[], lives:FALL_LIVES, typed:'', speed:26, gapMs:6500, last:0, nextAt:0, over:false, raf:0, t0:0};
+  G = {key:'fall', score:0, total:N, queue:shuffle(range(N)), drops:[], lives:FALL_LIVES, typed:'', speed:13, gapMs:6500, last:0, nextAt:0, over:false, raf:0, t0:0};
   const body = `<div class="fz" id="fz"><div class="fz-ground"></div></div>
     <div class="fz-row"><div class="fz-lives" id="lives"></div><div class="fz-input" id="typed"><span class="ph">Type a word…</span></div>
       <button class="gbtn fz-clr" id="clr">Clear</button><div class="fz-left" id="left"></div></div>

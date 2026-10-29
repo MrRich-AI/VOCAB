@@ -67,6 +67,7 @@ These rules are kept in sync with the "CONVERT | VOCAB | BASIC HTML Builds" Proj
 - The speed review flashes the definition (not a picture) and students choose the term.
 - In Picture Match, clicking a picture enlarges it.
 - Games are just practice: no submission.
+- **Falling Words** (also called Word Drop): definitions start falling at 13 px/s (half the original 26), still speeding up a little after each correct answer.
 - After seeing a new source pptx, suggest a few extra activities.
 - **Unique games:** for every new build, suggest 3 unique games tied to the unit's theme. Their formats must not duplicate the standard games above, Falling Words, or any unit-specific game already in the repo (Verb Patterns, Penalty Shootout, File Manager, Memory Feast, Expedition Crossword, Notice Board Word Search, Odd One Out, Train Coupling, Word Surgery).
 - **Unique-game rollout (approved; being built one unit at a time):** Unit 1 Penalty Shootout (shoot left if the term is used correctly, right if misused), Unit 2 File Manager (drag words into part-of-speech folders), Unit 11 Expedition Crossword (map-style, definitions as clues), Unit 12 Notice Board Word Search (definition clues). Built so far: Unit 13 Odd One Out (all 26 words in 9 sets, with a reason after each pick); Unit 3 Memory Feast (term–picture concentration on covered plates, 6 pairs a round, scored by tries). The new games work with the `?zh` link in Units 1–3. In the same pass, replace the flag emoji on the Vietnamese → English button in Units 1, 2, 11 and 12.
