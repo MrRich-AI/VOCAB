@@ -338,6 +338,22 @@ select.wfe{flex:0 0 auto;font-size:19px}
 .wf-foot button:disabled{background:#c9d3d2;box-shadow:none;color:#6a7d7c;cursor:not-allowed}
 .wf-foot .n{font-size:18px;color:#4b6463}
 .wf-empty{color:#7a8f8e;font-style:italic}
+
+/* ---------- odd one out ---------- */
+.oo-lab{font-size:26px;font-weight:bold;text-align:center;margin-bottom:18px}
+.oo-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:22px}
+.oo-card{background:#fff;color:#10222e;border-radius:20px;padding:14px 14px 16px;display:flex;flex-direction:column;align-items:center;gap:10px;border:5px solid #fff;box-shadow:0 8px 22px rgba(0,0,0,.35);transition:transform .12s}
+.oo-card:hover:not(:disabled){transform:translateY(-4px)}
+.oo-card img{width:100%;aspect-ratio:1;object-fit:cover;border-radius:12px;display:block}
+.oo-card .w{font-size:28px;font-weight:bold}
+.oo-card .p{font-size:16px;color:#5a6f7d;font-weight:bold;text-transform:uppercase;letter-spacing:1px}
+.oo-card:disabled{cursor:default}
+.oo-card.odd{border-color:#2fa463;animation:pop .35s}
+.oo-card.odd .w::after{content:" ✓";color:#2fa463}
+.oo-card.wrong{border-color:#d9443a;animation:shake .4s}
+.oo-card.dim{opacity:.6}
+.oo-why{margin-top:20px;min-height:66px;font-size:24px;line-height:1.35;background:rgba(0,0,0,.22);border-radius:16px;padding:14px 22px;visibility:hidden}
+.oo-why b{color:var(--gold)}
 </style>
 </head>
 <body>
@@ -387,7 +403,8 @@ const GAMES = {
   viet: {label: LNAME + ' → English', ic:'🌏', d:'Choose the English term'},
   speed:{label:'Speed Review', ic:'⚡', d:'Read the definition, pick the term fast'},
   spell:{label:'Spell It', ic:'🔡', d:'Look at the picture and definition, spell the term'},
-  fall: {label:'Falling Words', ic:'🌧️', d:'Type the term before the definition lands'}
+  fall: {label:'Falling Words', ic:'🌧️', d:'Type the term before the definition lands'},
+  odd:  {label:'Odd One Out', ic:'🔎', d:'Find the word that does not belong, then see why'}
 };
 const POS_OPTS = ['noun','verb','adjective','adverb','preposition','conjunction','phrase'];
 const WF = JSON.parse(document.getElementById('wf-data').textContent);
@@ -888,7 +905,7 @@ function saveDeck(){
 
 /* ---------- GAMES ---------- */
 function stopTimer(){ if (gTimer) { clearTimeout(gTimer); gTimer = null; } if (G && G.raf) { cancelAnimationFrame(G.raf); G.raf = 0; G.over = true; } }
-function startGame(k){ screen = 'game'; stopTimer(); ({match:startMatch, gap:startGap, spell:startSpell, fall:startFall, viet:() => startMCQ('viet'), speed:() => startMCQ('speed')})[k](); fit(); }
+function startGame(k){ screen = 'game'; stopTimer(); ({match:startMatch, gap:startGap, spell:startSpell, fall:startFall, viet:() => startMCQ('viet'), speed:() => startMCQ('speed'), odd:startOdd})[k](); fit(); }
 function gameShell(key, status, body){
   return `<div class="game"><div class="ghead"><span class="gt">${GAMES[key].ic} ${GAMES[key].label}</span><span class="gs">${status}</span><span class="sp"></span>
     <span class="gs">👤 ${esc(S.name)} · ${esc(S.cls)}</span><button id="gMenu">✕ Menu</button></div><div class="gbody">${body}</div></div>`;
@@ -1209,6 +1226,41 @@ document.addEventListener('keydown', e => {
   else if (e.key === 'Backspace') { e.preventDefault(); fallKey('DEL'); }
   else if (e.key === 'Escape') { G.typed = ''; fallTyped(); }
 });
+
+/* Odd One Out: every set uses this unit's words; all 26 appear at least once */
+const OOO = [
+  {w:['Glacier','Snow','Slush','Gravel'], odd:'Gravel', why:'gravel is small stones. Glacier, snow and slush are all frozen or partly frozen water.'},
+  {w:['Gorge','Valley','Mountains','Plain'], odd:'Plain', why:'a plain is large and flat. Gorges, valleys and mountains all have steep sides or slopes.'},
+  {w:['River','Mud','Slush','Sand dunes'], odd:'Sand dunes', why:'sand dunes are dry. A river, mud and slush are all wet.'},
+  {w:['Ambassador','Strikers','Survivors','Territory'], odd:'Territory', why:'a territory is an area of land. Ambassadors, strikers and survivors are all people.'},
+  {w:['Award','Honour','Praise','Retirement'], odd:'Retirement', why:'retirement means stopping work. An award, an honour and praise are all ways to show respect for someone.'},
+  {w:['Ferocious','Severe','Prolific','Feat'], odd:'Feat', why:'"feat" is a noun (an achievement). Ferocious, severe and prolific are all adjectives.'},
+  {w:['Struggle','Frustrated','Severe','Award'], odd:'Award', why:'an award is something good. Struggle, frustrated and severe are all connected with difficulty.'},
+  {w:['Household','Mud','Gravel','Snow'], odd:'Household', why:'"household" is about the home. Mud, gravel and snow are all natural materials found outdoors.'},
+  {w:['Strikers','Feat','Award','Glacier'], odd:'Glacier', why:'a glacier is part of nature. Strikers, a feat and an award are all connected with sport and achievement.'}
+];
+function startOdd(){ G = {key:'odd', score:0, q:0, qs:shuffle(OOO)}; G.total = G.qs.length; oddQ(); }
+function oddQ(){
+  const q = G.qs[G.q], ids = shuffle(q.w.map(t => C.findIndex(c => c.term === t)));
+  const body = `<div class="q-prog"><i style="width:${(G.q / G.total * 100).toFixed(1)}%"></i></div>
+    <div class="oo-lab">Which word is the odd one out?</div>
+    <div class="oo-grid">${ids.map(i => `<button class="oo-card" data-t="${esc(C[i].term)}"><img src="${IMG[C[i].pic.img]}" alt=""><span class="w">${esc(C[i].term)}</span><span class="p">${esc(C[i].pos)}</span></button>`).join('')}</div>
+    <div class="oo-why" id="why"></div>
+    <div class="q-foot"><span class="q-fb" id="fb"></span><button class="gbtn" id="nxt" style="visibility:hidden">${G.q + 1 < G.total ? 'Next ›' : 'See results ›'}</button></div>`;
+  stage.innerHTML = gameShell('odd', `Set ${G.q + 1} / ${G.total} · Score ${G.score}`, body);
+  wireShell();
+  stage.querySelectorAll('.oo-card').forEach(b => b.onclick = () => oddAnswer(b.dataset.t));
+  stage.querySelector('#nxt').onclick = () => { G.q++; if (G.q < G.total) oddQ(); else results(); };
+}
+function oddAnswer(t){
+  const q = G.qs[G.q], ok = t === q.odd;
+  stage.querySelectorAll('.oo-card').forEach(b => { b.disabled = true; b.classList.add(b.dataset.t === q.odd ? 'odd' : b.dataset.t === t ? 'wrong' : 'dim'); });
+  if (ok) G.score++;
+  const fb = stage.querySelector('#fb'); fb.textContent = ok ? '✓ Correct!' : '✗ Not quite.'; fb.style.color = ok ? '#b9f5cf' : '#ffd3cf';
+  const w = stage.querySelector('#why'); w.innerHTML = `<b>${esc(q.odd)}</b> is the odd one out: ${esc(q.why)}`; w.style.visibility = 'visible';
+  stage.querySelector('.ghead .gs').textContent = `Set ${G.q + 1} / ${G.total} · Score ${G.score}`;
+  stage.querySelector('#nxt').style.visibility = 'visible';
+}
 
 function results(){
   stopTimer();
