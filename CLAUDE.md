@@ -7,7 +7,7 @@ These rules are kept in sync with the "CONVERT | VOCAB | BASIC HTML Builds" Proj
 ## General working rules
 - If a request seems to contradict or clash with these rules, ask before building anything.
 - Never commit API keys or secrets.
-- Ask before committing and pushing a new or changed build.
+- New and changed builds: commit and push without asking (Oct 30 2026); never paste the raw HTML code in chat.
 
 ## Repo layout
 - One folder per unit: `unit-N/index.html` (one self-contained HTML file) plus `unit-N/thumb.jpg` (landing-page thumbnail, usually from the deck's title slide).
